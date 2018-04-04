@@ -1,4 +1,4 @@
-<?php 
+<?php
 	session_start();
 
 	// connect to database
@@ -7,7 +7,7 @@
 	// variable declaration
 	$username = "";
 	$email    = "";
-	$errors   = array(); 
+	$errors   = array();
 
 	// call the register() function if register_btn is clicked
 	if (isset($_POST['register_btn'])) {
@@ -36,14 +36,14 @@
 		$password_2  =  e($_POST['password_2']);
 
 		// form validation: ensure that the form is correctly filled
-		if (empty($username)) { 
-			array_push($errors, "Username is required"); 
+		if (empty($username)) {
+			array_push($errors, "Username is required");
 		}
-		if (empty($email)) { 
-			array_push($errors, "Email is required"); 
+		if (empty($email)) {
+			array_push($errors, "Email is required");
 		}
-		if (empty($password_1)) { 
-			array_push($errors, "Password is required"); 
+		if (empty($password_1)) {
+			array_push($errors, "Password is required");
 		}
 		if ($password_1 != $password_2) {
 			array_push($errors, "The two passwords do not match");
@@ -55,13 +55,13 @@
 
 			if (isset($_POST['user_type'])) {
 				$user_type = e($_POST['user_type']);
-				$query = "INSERT INTO users (username, email, user_type, password) 
+				$query = "INSERT INTO users (username, email, user_type, password)
 						  VALUES('$username', '$email', '$user_type', '$password')";
 				mysqli_query($db, $query);
 				$_SESSION['success']  = "New user successfully created!!";
 				header('location: home.php');
 			}else{
-				$query = "INSERT INTO users (username, email, user_type, password) 
+				$query = "INSERT INTO users (username, email, user_type, password)
 						  VALUES('$username', '$email', 'user', '$password')";
 				mysqli_query($db, $query);
 
@@ -70,7 +70,7 @@
 
 				$_SESSION['user'] = getUserById($logged_in_user_id); // put logged in user in session
 				$_SESSION['success']  = "You are now logged in";
-				header('location: index.php');				
+				header('location: index.php');
 			}
 
 		}
@@ -117,7 +117,7 @@
 
 					$_SESSION['user'] = $logged_in_user;
 					$_SESSION['success']  = "You are now logged in";
-					header('location: admin/home.php');		  
+					header('location: admin/home.php');
 				}else{
 					$_SESSION['user'] = $logged_in_user;
 					$_SESSION['success']  = "You are now logged in";

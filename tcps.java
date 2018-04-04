@@ -44,16 +44,15 @@ import java.net.*;
 import java.io.*;
 import java.util.HashMap;
 
-import java.
-
 public class tcps extends Thread
 {
   String ServerString;
   private ServerSocket ListeningSocket;
-
+  private HashMap<String, String> clients;
   public tcps (int port) throws IOException
   {
     ListeningSocket = new ServerSocket(port);
+    clients = new HashMap<>();
   }
 
   public void run()
@@ -109,29 +108,70 @@ public class tcps extends Thread
           //print out coordinates of phone later on
           try {
             // Create .csv file to test values on Webserver
-
             System.out.println ("Message: " + ServerString + " from " + s.getRemoteSocketAddress());
-            FileWriter pw = new FileWriter("geo.csv",true);
-            StringBuilder sb = new StringBuilder();
-            String[] addressString = s.getRemoteSocketAddress().toString().split(":");
-            String[] serverStringArray = ServerString.split(" ");
-            sb.append(serverStringArray[2]);
-            sb.append(',');
-            sb.append(serverStringArray[0]);
-            sb.append(',');
-            sb.append(serverStringArray[1]);
-            sb.append(',');
-            sb.append(addressString[0]);
-            sb.append(',');
-            sb.append(addressString[1]);
-            sb.append('\n');
-            pw.write(sb.toString());
-            pw.close();
+            clients.put(s.getRemoteSocketAddress().toString(), ServerString);
+            //if new client, append to the end of the csv file
+            if(!clients.containsKey(s.getRemoteSocketAddress().toString())) {
+              URL url = new URL("http://142.232.143.85:8200/data.txt");
+              URLConnection connection = url.openConnection();
+              connection.setDoOutput(true);
+
+              OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
+              StringBuilder sb = new StringBuilder();
+              String[] addressString = s.getRemoteSocketAddress().toString().split(":");
+              String[] serverStringArray = ServerString.split(" ");
+              sb.append(serverStringArray[2]);
+              sb.append(',');
+              sb.append(serverStringArray[0]);
+              sb.append(',');
+              sb.append(serverStringArray[1]);
+              sb.append(',');
+              sb.append(addressString[0]);
+              sb.append('\n');
+              out.write(sb.toString());
+              out.close();
+              /*
+              FileWriter pw = new FileWriter("geo.csv",true);
+              StringBuilder sb = new StringBuilder();
+              String[] addressString = s.getRemoteSocketAddress().toString().split(":");
+              String[] serverStringArray = ServerString.split(" ");
+              sb.append(serverStringArray[2]);
+              sb.append(',');
+              sb.append(serverStringArray[0]);
+              sb.append(',');
+              sb.append(serverStringArray[1]);
+              sb.append(',');
+              sb.append(addressString[0]);
+              sb.append('\n');
+              pw.write(sb.toString());
+              pw.close();*/
+            } else { //else update clients new values in csv
+              for(String client: clients.keySet()) {
+                URL url = new URL("http://142.232.143.85:8200/data.txt");
+                URLConnection connection = url.openConnection();
+                connection.setDoOutput(true);
+
+                OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
+                StringBuilder sb = new StringBuilder();
+                sb.append("name, lat, long, ip\n");
+                String[] addressString = s.getRemoteSocketAddress().toString().split(":");
+                String[] serverStringArray = ServerString.split(" ");
+                sb.append(serverStringArray[2]);
+                sb.append(',');
+                sb.append(serverStringArray[0]);
+                sb.append(',');
+                sb.append(serverStringArray[1]);
+                sb.append(',');
+                sb.append(addressString[0]);
+                sb.append('\n');
+                out.write(sb.toString());
+                out.close();
+              }
+            }
           }
           catch (IOException ex) {
             ex.printStackTrace();
           }
-
         }
       }
     }
