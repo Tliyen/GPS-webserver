@@ -46,11 +46,13 @@ import java.util.HashMap;
 
 public class tcps extends Thread
 {
+  boolean hasData;
   String ServerString;
   private ServerSocket ListeningSocket;
   private HashMap<String, String> clients;
   public tcps (int port) throws IOException
   {
+      hasData = false;
     ListeningSocket = new ServerSocket(port);
     clients = new HashMap<>();
   }
@@ -112,24 +114,31 @@ public class tcps extends Thread
             clients.put(s.getRemoteSocketAddress().toString(), ServerString);
             //if new client, append to the end of the csv file
             if(!clients.containsKey(s.getRemoteSocketAddress().toString())) {
-              URL url = new URL("http://142.232.143.85:8200/data.txt");
-              URLConnection connection = url.openConnection();
-              connection.setDoOutput(true);
 
-              OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
+              FileWriter pw = new FileWriter("geo.csv",true);
+              FileWriter aw = new  FileWriter("all.csv", true);
               StringBuilder sb = new StringBuilder();
+              if(!hasData){
+              sb.append("name, lat, long, ip, time\n");
+              hasData = true;
+              }
+
               String[] addressString = s.getRemoteSocketAddress().toString().split(":");
               String[] serverStringArray = ServerString.split(" ");
-              sb.append(serverStringArray[2]);
+              sb.append(serverStringArray[3]);
               sb.append(',');
-              sb.append(serverStringArray[0]);
+              sb.append(serverStringArray[2]);
               sb.append(',');
               sb.append(serverStringArray[1]);
               sb.append(',');
+              sb.append(serverStringArray[0]);
+              sb.append(',');
               sb.append(addressString[0]);
               sb.append('\n');
-              out.write(sb.toString());
-              out.close();
+              pw.write(sb.toString());
+                aw.write(sb.toString());
+            aw.close();
+              pw.close();
               /*
               FileWriter pw = new FileWriter("geo.csv",true);
               StringBuilder sb = new StringBuilder();
@@ -146,27 +155,30 @@ public class tcps extends Thread
               pw.write(sb.toString());
               pw.close();*/
             } else { //else update clients new values in csv
-              for(String client: clients.keySet()) {
-                URL url = new URL("http://142.232.143.85:8200/data.txt");
-                URLConnection connection = url.openConnection();
-                connection.setDoOutput(true);
 
-                OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
+                FileWriter pw = new FileWriter("geo.csv",false);
                 StringBuilder sb = new StringBuilder();
-                sb.append("name, lat, long, ip\n");
+                sb.append("name, lat, long, ip, time\n");
+
+                for(String client: clients.keySet()) {
+                System.out.println (client);
                 String[] addressString = s.getRemoteSocketAddress().toString().split(":");
-                String[] serverStringArray = ServerString.split(" ");
-                sb.append(serverStringArray[2]);
+                String[] clientStringArray = clients.get(client).split(" ");
+                sb.append(clientStringArray[3]);
                 sb.append(',');
-                sb.append(serverStringArray[0]);
+                sb.append(clientStringArray[2]);
                 sb.append(',');
-                sb.append(serverStringArray[1]);
+                sb.append(clientStringArray[1]);
+                sb.append(',');
+                sb.append(clientStringArray[0]);
                 sb.append(',');
                 sb.append(addressString[0]);
                 sb.append('\n');
-                out.write(sb.toString());
-                out.close();
-              }
+               }
+
+                pw.write(sb.toString());
+                pw.close();
+
             }
           }
           catch (IOException ex) {
