@@ -125,7 +125,7 @@ public class tcps extends Thread
             al.append(StringArray[1]);
             al.append(',');
             for (int i=0; i < addressAllString.length; i++) {
-                test[i] = test[i].replaceAll("/", "");
+                addressAllString[i] = addressAllString[i].replaceAll("/", "");
             }
             al.append(addressAllString[0]);
             al.append(',');
@@ -155,7 +155,7 @@ public class tcps extends Thread
               sb.append(serverStringArray[1]);
               sb.append(',');
               for (int i=0; i < addressString.length; i++) {
-                  test[i] = test[i].replaceAll("/", "");
+                  addressString[i] = addressString[i].replaceAll("/", "");
               }
               sb.append(addressString[0]);
               sb.append(',');
@@ -180,7 +180,7 @@ public class tcps extends Thread
                 sb.append(clientStringArray[1]);
                 sb.append(',');
                 for (int i=0; i < addressString.length; i++) {
-                    test[i] = test[i].replaceAll("/", "");
+                    addressString[i] = addressString[i].replaceAll("/", "");
                 }
                 sb.append(addressString[0]);
                 sb.append(',');
