@@ -114,21 +114,24 @@ public class tcps extends Thread
             clients.put(s.getRemoteSocketAddress().toString(), ServerString);
 
             FileWriter aw = new  FileWriter("all.csv", true);
-            String[] addressString = s.getRemoteSocketAddress().toString().split(":");
-            String[] serverStringArray = ServerString.split(" ");
-            StringBuilder sb = new StringBuilder();
+            String[] addressAllString = s.getRemoteSocketAddress().toString().split(":");
+            String[] StringArray = ServerString.split(" ");
+            StringBuilder al = new StringBuilder();
 
-            sb.append(serverStringArray[2]);
-            sb.append(',');
-            sb.append(serverStringArray[0]);
-            sb.append(',');
-            sb.append(serverStringArray[1]);
-            sb.append(',');
-            sb.append(addressString[0]);
-            sb.append(',');
-            sb.append(serverStringArray[3]);
-            sb.append('\n');
-            aw.write(sb.toString());
+            al.append(StringArray[2]);
+            al.append(',');
+            al.append(StringArray[0]);
+            al.append(',');
+            al.append(StringArray[1]);
+            al.append(',');
+            for (int i=0; i < addressAllString.length; i++) {
+                test[i] = test[i].replaceAll("/", "");
+            }
+            al.append(addressAllString[0]);
+            al.append(',');
+            al.append(StringArray[3]);
+            al.append('\n');
+            aw.write(al.toString());
             aw.close();
 
             //if new client, append to the end of the csv file
@@ -151,7 +154,9 @@ public class tcps extends Thread
               sb.append(',');
               sb.append(serverStringArray[1]);
               sb.append(',');
-              addressString = addressString.replace("/", "");
+              for (int i=0; i < addressString.length; i++) {
+                  test[i] = test[i].replaceAll("/", "");
+              }
               sb.append(addressString[0]);
               sb.append(',');
               sb.append(serverStringArray[3]);
@@ -174,7 +179,9 @@ public class tcps extends Thread
                 sb.append(',');
                 sb.append(clientStringArray[1]);
                 sb.append(',');
-                addressString = addressString.replace("/", "");
+                for (int i=0; i < addressString.length; i++) {
+                    test[i] = test[i].replaceAll("/", "");
+                }
                 sb.append(addressString[0]);
                 sb.append(',');
                 sb.append(clientStringArray[3]);
