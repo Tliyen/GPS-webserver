@@ -114,8 +114,9 @@ public class tcps extends Thread
             clients.put(s.getRemoteSocketAddress().toString(), ServerString);
 
             FileWriter aw = new  FileWriter("all.csv", true);
-            String[] addressString = s.getRemoteSocketAddress().toString().split("/",":");
+            String[] addressString = s.getRemoteSocketAddress().toString().split(":");
             String[] serverStringArray = ServerString.split(" ");
+            StringBuilder sb = new StringBuilder();
 
             sb.append(serverStringArray[2]);
             sb.append(',');
@@ -141,7 +142,7 @@ public class tcps extends Thread
                 hasData = true;
               }
 
-              String[] addressString = s.getRemoteSocketAddress().toString().split("/",":");
+              String[] addressString = s.getRemoteSocketAddress().toString().split(":");
               String[] serverStringArray = ServerString.split(" ");
 
               sb.append(serverStringArray[2]);
@@ -150,6 +151,7 @@ public class tcps extends Thread
               sb.append(',');
               sb.append(serverStringArray[1]);
               sb.append(',');
+              addressString = addressString.replace("/", "");
               sb.append(addressString[0]);
               sb.append(',');
               sb.append(serverStringArray[3]);
@@ -164,7 +166,7 @@ public class tcps extends Thread
               sb.append("name, lat, long, ip, time\n");
 
               for(String client: clients.keySet()) {
-                String[] addressString = s.getRemoteSocketAddress().toString().split(":","/");
+                String[] addressString = s.getRemoteSocketAddress().toString().split(":");
                 String[] clientStringArray = clients.get(client).split(" ");
                 sb.append(clientStringArray[2]);
                 sb.append(',');
@@ -172,6 +174,7 @@ public class tcps extends Thread
                 sb.append(',');
                 sb.append(clientStringArray[1]);
                 sb.append(',');
+                addressString = addressString.replace("/", "");
                 sb.append(addressString[0]);
                 sb.append(',');
                 sb.append(clientStringArray[3]);
