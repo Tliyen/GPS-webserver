@@ -1,8 +1,49 @@
 <?php
+/*---------------------------------------------------------------------------------------
+--	Source File:		functions.php - Scripts for
+--
+--	Classes:		tcps - public class
+--				ServerSocket - java.net
+--				Socket	     - java.net
+--
+--	Methods:
+--				getRemoteSocketAddress 	(Socket Class)
+--				getLocalSocketAddress  	(Socket Class)
+--				getInputStream		(Socket Class)
+--				getOutputStream		(Socket Class)
+--				getLocalPort		(ServerSocket Class)
+--				setSoTimeout		(ServerSocket Class)
+--				accept			(ServerSocket Class)
+--
+--
+--	Date:			April 3, 2018
+--
+--	Revisions:		(Date and Description)
+--                April 3, 2018
+--                Initialize and Set up Project
+--
+--	Designer:		  Anthony Vu, Li-Yan Tong, Morgan Ariss, John Tee
+--                Source: tcps.java Aman Abdulla (February 8, 2014)
+--
+--	Programmer:		Anthony Vu & Li-Yan Tong
+--
+--	Notes:
+--	The program utilizes the java.net package to implement a basic web server.
+--  The server is multi-threaded so every new client connection is handled by a
+--  separate thread.
+--
+--	The application receives a string from an echo client and appends this data
+--  to a .csv file to be later formatted by a website.
+--
+--	Generate the class file and run it as follows:
+--			javac tcps.java
+--			java tcps <server port>
+---------------------------------------------------------------------------------------*/
+
 	session_start();
 
 	// connect to database
-	$db = mysqli_connect('localhost', 'root', '', 'multi_login');
+	$db = mysqli_connect('localhost', 'root', 'ok', 'multi_login');
 
 	// variable declaration
 	$username = "";

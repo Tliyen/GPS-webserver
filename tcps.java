@@ -52,7 +52,7 @@ public class tcps extends Thread
   private HashMap<String, String> clients;
   public tcps (int port) throws IOException
   {
-      hasData = false;
+    hasData = false;
     ListeningSocket = new ServerSocket(port);
     clients = new HashMap<>();
   }
@@ -112,72 +112,74 @@ public class tcps extends Thread
             // Create .csv file to test values on Webserver
             System.out.println ("Message: " + ServerString + " from " + s.getRemoteSocketAddress());
             clients.put(s.getRemoteSocketAddress().toString(), ServerString);
+
+            FileWriter aw = new  FileWriter("all.csv", true);
+            String[] addressString = s.getRemoteSocketAddress().toString().split("/",":");
+            String[] serverStringArray = ServerString.split(" ");
+
+            sb.append(serverStringArray[2]);
+            sb.append(',');
+            sb.append(serverStringArray[0]);
+            sb.append(',');
+            sb.append(serverStringArray[1]);
+            sb.append(',');
+            sb.append(addressString[0]);
+            sb.append(',');
+            sb.append(serverStringArray[3]);
+            sb.append('\n');
+            aw.write(sb.toString());
+            aw.close();
+
             //if new client, append to the end of the csv file
             if(!clients.containsKey(s.getRemoteSocketAddress().toString())) {
 
               FileWriter pw = new FileWriter("geo.csv",true);
-              FileWriter aw = new  FileWriter("all.csv", true);
               StringBuilder sb = new StringBuilder();
+
               if(!hasData){
-              sb.append("name, lat, long, ip, time\n");
-              hasData = true;
+                sb.append("name, lat, long, ip, time\n");
+                hasData = true;
               }
 
-              String[] addressString = s.getRemoteSocketAddress().toString().split(":");
+              String[] addressString = s.getRemoteSocketAddress().toString().split("/",":");
               String[] serverStringArray = ServerString.split(" ");
+
+              sb.append(serverStringArray[2]);
+              sb.append(',');
+              sb.append(serverStringArray[0]);
+              sb.append(',');
+              sb.append(serverStringArray[1]);
+              sb.append(',');
+              sb.append(addressString[0]);
+              sb.append(',');
               sb.append(serverStringArray[3]);
-              sb.append(',');
-              sb.append(serverStringArray[2]);
-              sb.append(',');
-              sb.append(serverStringArray[1]);
-              sb.append(',');
-              sb.append(serverStringArray[0]);
-              sb.append(',');
-              sb.append(addressString[0]);
               sb.append('\n');
               pw.write(sb.toString());
-                aw.write(sb.toString());
-            aw.close();
+              aw.write(sb.toString());
               pw.close();
-              /*
-              FileWriter pw = new FileWriter("geo.csv",true);
-              StringBuilder sb = new StringBuilder();
-              String[] addressString = s.getRemoteSocketAddress().toString().split(":");
-              String[] serverStringArray = ServerString.split(" ");
-              sb.append(serverStringArray[2]);
-              sb.append(',');
-              sb.append(serverStringArray[0]);
-              sb.append(',');
-              sb.append(serverStringArray[1]);
-              sb.append(',');
-              sb.append(addressString[0]);
-              sb.append('\n');
-              pw.write(sb.toString());
-              pw.close();*/
             } else { //else update clients new values in csv
 
-                FileWriter pw = new FileWriter("geo.csv",false);
-                StringBuilder sb = new StringBuilder();
-                sb.append("name, lat, long, ip, time\n");
+              FileWriter pw = new FileWriter("geo.csv",false);
+              StringBuilder sb = new StringBuilder();
+              sb.append("name, lat, long, ip, time\n");
 
-                for(String client: clients.keySet()) {
-                System.out.println (client);
-                String[] addressString = s.getRemoteSocketAddress().toString().split(":");
+              for(String client: clients.keySet()) {
+                String[] addressString = s.getRemoteSocketAddress().toString().split(":","/");
                 String[] clientStringArray = clients.get(client).split(" ");
-                sb.append(clientStringArray[3]);
-                sb.append(',');
                 sb.append(clientStringArray[2]);
-                sb.append(',');
-                sb.append(clientStringArray[1]);
                 sb.append(',');
                 sb.append(clientStringArray[0]);
                 sb.append(',');
+                sb.append(clientStringArray[1]);
+                sb.append(',');
                 sb.append(addressString[0]);
+                sb.append(',');
+                sb.append(clientStringArray[3]);
                 sb.append('\n');
-               }
+              }
 
-                pw.write(sb.toString());
-                pw.close();
+              pw.write(sb.toString());
+              pw.close();
 
             }
           }
