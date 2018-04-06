@@ -3,7 +3,6 @@
 --	Source File:		tcps.java - A simple (multi-threaded) Java TCP echo server
 --
 --	Classes:		tcps - public class
---        ReadThread - public thread class
 --				ServerSocket - java.net
 --				Socket	     - java.net
 --
@@ -58,7 +57,7 @@ public class tcps extends Thread
     clients = new HashMap<>();
   }
 
-    /*------------------------------------------------------------------------------------
+  /*------------------------------------------------------------------------------------
   -- FUNCTION: run()
   --
   -- DATE:  March 4, 2018
@@ -97,6 +96,7 @@ public class tcps extends Thread
         break;
       }
     }
+
   }
 
   /*------------------------------------------------------------------------------------
@@ -126,7 +126,7 @@ public class tcps extends Thread
       this.s = s;
     }
 
-      /*------------------------------------------------------------------------------------
+    /*------------------------------------------------------------------------------------
     -- FUNCTION: run()
     --
     -- DATE:  March 4, 2018
@@ -144,89 +144,89 @@ public class tcps extends Thread
     --
     -- NOTES:
     ---------------------------------------------------------------------------------------*/
-      public void run() {
+    public void run() {
 
-        while(true) {
-          DataInputStream in = null;
+      while(true) {
+        DataInputStream in = null;
+        try {
+          in = new DataInputStream(s.getInputStream());
+          ServerString = in.readLine();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+        if(ServerString.toLowerCase().equals("quit")) {
+          System.out.println(s.getRemoteSocketAddress() + " has disconnected.");
           try {
-            in = new DataInputStream(s.getInputStream());
-            ServerString = in.readLine();
+            s.close();
           } catch (IOException e) {
             e.printStackTrace();
           }
-          if(ServerString.toLowerCase().equals("quit")) {
-            System.out.println(s.getRemoteSocketAddress() + " has disconnected.");
-            try {
-              s.close();
-            } catch (IOException e) {
-              e.printStackTrace();
+          break;
+        }
+        if(ServerString.length() > 0) {
+          //print out coordinates of phone later on
+          try {
+            // Create .csv file to test values on Webserver
+            System.out.println ("Message: " + ServerString + " from " + s.getRemoteSocketAddress());
+            clients.put(s.getRemoteSocketAddress().toString(), ServerString);
+
+            FileWriter aw = new  FileWriter("all.csv", true);
+            String[] addressAllString = s.getRemoteSocketAddress().toString().split(":");
+            String[] StringArray = ServerString.split(" ");
+            StringBuilder al = new StringBuilder();
+
+            al.append(StringArray[2]);
+            al.append(',');
+            al.append(StringArray[0]);
+            al.append(',');
+            al.append(StringArray[1]);
+            al.append(',');
+            for (int i=0; i < addressAllString.length; i++) {
+              addressAllString[i] = addressAllString[i].replaceAll("/", "");
             }
-            break;
+            al.append(addressAllString[0]);
+            al.append(',');
+            al.append(StringArray[3]);
+            al.append('\n');
+            aw.write(al.toString());
+            aw.close();
+
+            FileWriter pw = new FileWriter("geo.csv",false);
+            StringBuilder sb = new StringBuilder();
+            sb.append("name, lat, long, ip, time\n");
+
+            for(String client: clients.keySet()) {
+              String[] addressString = s.getRemoteSocketAddress().toString().split(":");
+              String[] clientStringArray = clients.get(client).split(" ");
+              sb.append(clientStringArray[2]);
+              sb.append(',');
+              sb.append(clientStringArray[0]);
+              sb.append(',');
+              sb.append(clientStringArray[1]);
+              sb.append(',');
+              for (int i=0; i < addressString.length; i++) {
+                addressString[i] = addressString[i].replaceAll("/", "");
+              }
+              sb.append(addressString[0]);
+              sb.append(',');
+              sb.append(clientStringArray[3]);
+              sb.append('\n');
+            }
+
+            pw.write(sb.toString());
+            pw.close();
+
           }
-          if(ServerString.length() > 0) {
-            //print out coordinates of phone later on
-            try {
-              // Create .csv file to test values on Webserver
-              System.out.println ("Message: " + ServerString + " from " + s.getRemoteSocketAddress());
-              clients.put(s.getRemoteSocketAddress().toString(), ServerString);
-
-              FileWriter aw = new  FileWriter("all.csv", true);
-              String[] addressAllString = s.getRemoteSocketAddress().toString().split(":");
-              String[] StringArray = ServerString.split(" ");
-              StringBuilder al = new StringBuilder();
-
-              al.append(StringArray[2]);
-              al.append(',');
-              al.append(StringArray[0]);
-              al.append(',');
-              al.append(StringArray[1]);
-              al.append(',');
-              for (int i=0; i < addressAllString.length; i++) {
-                addressAllString[i] = addressAllString[i].replaceAll("/", "");
-              }
-              al.append(addressAllString[0]);
-              al.append(',');
-              al.append(StringArray[3]);
-              al.append('\n');
-              aw.write(al.toString());
-              aw.close();
-
-              FileWriter pw = new FileWriter("geo.csv",false);
-              StringBuilder sb = new StringBuilder();
-              sb.append("name, lat, long, ip, time\n");
-
-              for(String client: clients.keySet()) {
-                String[] addressString = s.getRemoteSocketAddress().toString().split(":");
-                String[] clientStringArray = clients.get(client).split(" ");
-                sb.append(clientStringArray[2]);
-                sb.append(',');
-                sb.append(clientStringArray[0]);
-                sb.append(',');
-                sb.append(clientStringArray[1]);
-                sb.append(',');
-                for (int i=0; i < addressString.length; i++) {
-                  addressString[i] = addressString[i].replaceAll("/", "");
-                }
-                sb.append(addressString[0]);
-                sb.append(',');
-                sb.append(clientStringArray[3]);
-                sb.append('\n');
-              }
-
-              pw.write(sb.toString());
-              pw.close();
-
-            }
-            catch (IOException ex) {
-              ex.printStackTrace();
-            }
+          catch (IOException ex) {
+            ex.printStackTrace();
           }
         }
       }
     }
+
   }
 
-    /*------------------------------------------------------------------------------------
+  /*------------------------------------------------------------------------------------
   -- FUNCTION: main()
   --
   -- DATE:  April 3, 2018
