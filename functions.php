@@ -1,43 +1,34 @@
 <?php
 /*---------------------------------------------------------------------------------------
---	Source File:		functions.php - Scripts for
+--	Source File:		functions.php - Scripts for Login
 --
---	Classes:		tcps - public class
---				ServerSocket - java.net
---				Socket	     - java.net
+--	Classes:
 --
---	Methods:
---				getRemoteSocketAddress 	(Socket Class)
---				getLocalSocketAddress  	(Socket Class)
---				getInputStream		(Socket Class)
---				getOutputStream		(Socket Class)
---				getLocalPort		(ServerSocket Class)
---				setSoTimeout		(ServerSocket Class)
---				accept			(ServerSocket Class)
---
+--	Methods:		register()
+--							getUserById()
+--							login()
+--							isLoggedIn()
+--							isAdmin()
+--							e()
+--							display_error()
 --
 --	Date:			April 3, 2018
 --
 --	Revisions:		(Date and Description)
 --                April 3, 2018
 --                Initialize and Set up Project
+--                April 5, 2018
+--                Code Comments
 --
 --	Designer:		  Anthony Vu, Li-Yan Tong, Morgan Ariss, John Tee
---                Source: tcps.java Aman Abdulla (February 8, 2014)
+--                Source: Awa Melvine: User Registration Tutorial
 --
---	Programmer:		Anthony Vu & Li-Yan Tong
+--	Programmer:		Li-Yan Tong
 --
 --	Notes:
---	The program utilizes the java.net package to implement a basic web server.
---  The server is multi-threaded so every new client connection is handled by a
---  separate thread.
---
---	The application receives a string from an echo client and appends this data
---  to a .csv file to be later formatted by a website.
---
---	Generate the class file and run it as follows:
---			javac tcps.java
---			java tcps <server port>
+--	Handles functions used by the website related to the user login system.  It is based
+--  off a PHP tutorial at the following site:
+--  https://codewithawa.com/posts/complete-user-registration-system-using-php-and-mysql-database
 ---------------------------------------------------------------------------------------*/
 
 	session_start();
@@ -66,7 +57,25 @@
 		header("location: ../login.php");
 	}
 
-	// REGISTER USER
+	/*------------------------------------------------------------------------------------
+  -- FUNCTION: Register()
+  --
+  -- DATE:  April 3, 2018
+  --
+  -- REVISIONS: April 3, 2018
+  --							Initial file set up
+  --
+  -- DESIGNER: Li-Yan Tong & John Tee
+	--           Source: Awa Melvine: User Registration Tutorial
+  --
+  -- PROGRAMMER: Li-Yan Tong
+  --
+  -- INTERFACE: register()
+  --
+  -- RETURNS: void
+  --
+  -- NOTES:
+  ---------------------------------------------------------------------------------------*/
 	function register(){
 		global $db, $errors;
 
@@ -118,7 +127,25 @@
 
 	}
 
-	// return user array from their id
+	/*------------------------------------------------------------------------------------
+  -- FUNCTION: getUserById()
+  --
+  -- DATE:  April 3, 2018
+  --
+  -- REVISIONS: April 3, 2018
+  --							Initial file set up
+  --
+  -- DESIGNER: Li-Yan Tong & John Tee
+	--           Source: Awa Melvine: User Registration Tutorial
+  --
+  -- PROGRAMMER: Li-Yan Tong
+  --
+  -- INTERFACE: getUserById()
+  --
+  -- RETURNS: User array from their id
+  --
+  -- NOTES:
+  ---------------------------------------------------------------------------------------*/	//
 	function getUserById($id){
 		global $db;
 		$query = "SELECT * FROM users WHERE id=" . $id;
@@ -128,7 +155,25 @@
 		return $user;
 	}
 
-	// LOGIN USER
+	/*------------------------------------------------------------------------------------
+  -- FUNCTION: login()
+  --
+  -- DATE:  April 3, 2018
+  --
+  -- REVISIONS: April 3, 2018
+  --							Initial file set up
+  --
+  -- DESIGNER: Li-Yan Tong & John Tee
+	--           Source: Awa Melvine: User Registration Tutorial
+  --
+  -- PROGRAMMER: Li-Yan Tong
+  --
+  -- INTERFACE: login()
+  --
+  -- RETURNS: User array from their id
+  --
+  -- NOTES:
+  ---------------------------------------------------------------------------------------*/
 	function login(){
 		global $db, $username, $errors;
 
@@ -171,6 +216,25 @@
 		}
 	}
 
+	/*------------------------------------------------------------------------------------
+  -- FUNCTION: isLoggedIn()
+  --
+  -- DATE:  April 3, 2018
+  --
+  -- REVISIONS: April 3, 2018
+  --							Initial file set up
+  --
+  -- DESIGNER: Li-Yan Tong & John Tee
+	--           Source: Awa Melvine: User Registration Tutorial
+  --
+  -- PROGRAMMER: Li-Yan Tong
+  --
+  -- INTERFACE: isLoggedIn()
+  --
+  -- RETURNS: User array from their id
+  --
+  -- NOTES:
+  ---------------------------------------------------------------------------------------*/
 	function isLoggedIn()
 	{
 		if (isset($_SESSION['user'])) {
@@ -180,6 +244,25 @@
 		}
 	}
 
+	/*------------------------------------------------------------------------------------
+  -- FUNCTION: isLoggedIn()
+  --
+  -- DATE:  April 3, 2018
+  --
+  -- REVISIONS: April 3, 2018
+  --							Initial file set up
+  --
+  -- DESIGNER: Li-Yan Tong & John Tee
+	--           Source: Awa Melvine: User Registration Tutorial
+  --
+  -- PROGRAMMER: Li-Yan Tong
+  --
+  -- INTERFACE: isLoggedIn()
+  --
+  -- RETURNS: User array from their id
+  --
+  -- NOTES:
+  ---------------------------------------------------------------------------------------*/
 	function isAdmin()
 	{
 		if (isset($_SESSION['user']) && $_SESSION['user']['user_type'] == 'admin' ) {
@@ -190,11 +273,49 @@
 	}
 
 	// escape string
+	/*------------------------------------------------------------------------------------
+	-- FUNCTION: isLoggedIn()
+	--
+	-- DATE:  April 3, 2018
+	--
+	-- REVISIONS: April 3, 2018
+	--							Initial file set up
+	--
+	-- DESIGNER: Li-Yan Tong & John Tee
+	--           Source: Awa Melvine: User Registration Tutorial
+	--
+	-- PROGRAMMER: Li-Yan Tong
+	--
+	-- INTERFACE: isLoggedIn()
+	--
+	-- RETURNS: User array from their id
+	--
+	-- NOTES:
+	---------------------------------------------------------------------------------------*/
 	function e($val){
 		global $db;
 		return mysqli_real_escape_string($db, trim($val));
 	}
 
+	/*------------------------------------------------------------------------------------
+  -- FUNCTION: isLoggedIn()
+  --
+  -- DATE:  April 3, 2018
+  --
+  -- REVISIONS: April 3, 2018
+  --							Initial file set up
+  --
+  -- DESIGNER: Li-Yan Tong & John Tee
+	--           Source: Awa Melvine: User Registration Tutorial
+  --
+  -- PROGRAMMER: Li-Yan Tong
+  --
+  -- INTERFACE: isLoggedIn()
+  --
+  -- RETURNS: User array from their id
+  --
+  -- NOTES:
+  ---------------------------------------------------------------------------------------*/
 	function display_error() {
 		global $errors;
 

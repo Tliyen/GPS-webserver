@@ -3,6 +3,7 @@
 --	Source File:		tcps.java - A simple (multi-threaded) Java TCP echo server
 --
 --	Classes:		tcps - public class
+--        ReadThread - public thread class
 --				ServerSocket - java.net
 --				Socket	     - java.net
 --
@@ -57,6 +58,24 @@ public class tcps extends Thread
     clients = new HashMap<>();
   }
 
+    /*------------------------------------------------------------------------------------
+  -- FUNCTION: run()
+  --
+  -- DATE:  March 4, 2018
+  --
+  -- REVISIONS: March 4, 2018
+  --							Initial file set up
+  --
+  -- DESIGNER: Li-Yan Tong & John Tee
+  --
+  -- PROGRAMMER: Li-Yan Tong
+  --
+  -- INTERFACE: run()
+  --
+  -- RETURNS:
+  --
+  -- NOTES:
+  ---------------------------------------------------------------------------------------*/
   public void run()
   {
     while(true)
@@ -78,93 +97,105 @@ public class tcps extends Thread
         break;
       }
     }
-
   }
 
+  /*------------------------------------------------------------------------------------
+  -- Class: ReadThread()
+  --
+  -- DATE:  March 4, 2018
+  --
+  -- REVISIONS: March 4, 2018
+  --							Initial file set up
+  --
+  -- DESIGNER: Li-Yan Tong & John Tee
+  --
+  -- PROGRAMMER: Li-Yan Tong
+  --
+  -- INTERFACE: ReadThread()
+  --
+  -- RETURNS: int
+  --					If sucessful file request and printed to screen return 0
+  --					If it fails return -1
+  --
+  -- NOTES:
+  ---------------------------------------------------------------------------------------*/
   class ReadThread extends Thread {
 
     private Socket s;
     public ReadThread(Socket s) {
       this.s = s;
     }
-    public void run() {
 
-      while(true) {
-        DataInputStream in = null;
-        try {
-          in = new DataInputStream(s.getInputStream());
-          ServerString = in.readLine();
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-        if(ServerString.toLowerCase().equals("quit")) {
-          System.out.println(s.getRemoteSocketAddress() + " has disconnected.");
+      /*------------------------------------------------------------------------------------
+    -- FUNCTION: run()
+    --
+    -- DATE:  March 4, 2018
+    --
+    -- REVISIONS: March 4, 2018
+    --							Initial file set up
+    --
+    -- DESIGNER: Li-Yan Tong & John Tee
+    --
+    -- PROGRAMMER: Li-Yan Tong
+    --
+    -- INTERFACE: run()
+    --
+    -- RETURNS:
+    --
+    -- NOTES:
+    ---------------------------------------------------------------------------------------*/
+    class ReadThread extends Thread {
+
+      private Socket s;
+      public ReadThread(Socket s) {
+        this.s = s;
+      }
+      public void run() {
+
+        while(true) {
+          DataInputStream in = null;
           try {
-            s.close();
+            in = new DataInputStream(s.getInputStream());
+            ServerString = in.readLine();
           } catch (IOException e) {
             e.printStackTrace();
           }
-          break;
-        }
-        if(ServerString.length() > 0) {
-          //print out coordinates of phone later on
-          try {
-            // Create .csv file to test values on Webserver
-            System.out.println ("Message: " + ServerString + " from " + s.getRemoteSocketAddress());
-            clients.put(s.getRemoteSocketAddress().toString(), ServerString);
-
-            FileWriter aw = new  FileWriter("all.csv", true);
-            String[] addressAllString = s.getRemoteSocketAddress().toString().split(":");
-            String[] StringArray = ServerString.split(" ");
-            StringBuilder al = new StringBuilder();
-
-            al.append(StringArray[2]);
-            al.append(',');
-            al.append(StringArray[0]);
-            al.append(',');
-            al.append(StringArray[1]);
-            al.append(',');
-            for (int i=0; i < addressAllString.length; i++) {
-                addressAllString[i] = addressAllString[i].replaceAll("/", "");
+          if(ServerString.toLowerCase().equals("quit")) {
+            System.out.println(s.getRemoteSocketAddress() + " has disconnected.");
+            try {
+              s.close();
+            } catch (IOException e) {
+              e.printStackTrace();
             }
-            al.append(addressAllString[0]);
-            al.append(',');
-            al.append(StringArray[3]);
-            al.append('\n');
-            aw.write(al.toString());
-            aw.close();
+            break;
+          }
+          if(ServerString.length() > 0) {
+            //print out coordinates of phone later on
+            try {
+              // Create .csv file to test values on Webserver
+              System.out.println ("Message: " + ServerString + " from " + s.getRemoteSocketAddress());
+              clients.put(s.getRemoteSocketAddress().toString(), ServerString);
 
-            //if new client, append to the end of the csv file
-            if(!clients.containsKey(s.getRemoteSocketAddress().toString())) {
+              FileWriter aw = new  FileWriter("all.csv", true);
+              String[] addressAllString = s.getRemoteSocketAddress().toString().split(":");
+              String[] StringArray = ServerString.split(" ");
+              StringBuilder al = new StringBuilder();
 
-              FileWriter pw = new FileWriter("geo.csv",true);
-              StringBuilder sb = new StringBuilder();
-
-              if(!hasData){
-                sb.append("name, lat, long, ip, time\n");
-                hasData = true;
+              al.append(StringArray[2]);
+              al.append(',');
+              al.append(StringArray[0]);
+              al.append(',');
+              al.append(StringArray[1]);
+              al.append(',');
+              for (int i=0; i < addressAllString.length; i++) {
+                addressAllString[i] = addressAllString[i].replaceAll("/", "");
               }
-
-              String[] addressString = s.getRemoteSocketAddress().toString().split(":");
-              String[] serverStringArray = ServerString.split(" ");
-
-              sb.append(serverStringArray[2]);
-              sb.append(',');
-              sb.append(serverStringArray[0]);
-              sb.append(',');
-              sb.append(serverStringArray[1]);
-              sb.append(',');
-              for (int i=0; i < addressString.length; i++) {
-                  addressString[i] = addressString[i].replaceAll("/", "");
-              }
-              sb.append(addressString[0]);
-              sb.append(',');
-              sb.append(serverStringArray[3]);
-              sb.append('\n');
-              pw.write(sb.toString());
-              aw.write(sb.toString());
-              pw.close();
-            } else { //else update clients new values in csv
+              al.append(addressAllString[0]);
+              al.append(',');
+              al.append(StringArray[3]);
+              al.append('\n');
+              aw.write(al.toString());
+              aw.close();
 
               FileWriter pw = new FileWriter("geo.csv",false);
               StringBuilder sb = new StringBuilder();
@@ -180,7 +211,7 @@ public class tcps extends Thread
                 sb.append(clientStringArray[1]);
                 sb.append(',');
                 for (int i=0; i < addressString.length; i++) {
-                    addressString[i] = addressString[i].replaceAll("/", "");
+                  addressString[i] = addressString[i].replaceAll("/", "");
                 }
                 sb.append(addressString[0]);
                 sb.append(',');
@@ -192,15 +223,33 @@ public class tcps extends Thread
               pw.close();
 
             }
-          }
-          catch (IOException ex) {
-            ex.printStackTrace();
+            catch (IOException ex) {
+              ex.printStackTrace();
+            }
           }
         }
       }
-    }
 
   }
+
+    /*------------------------------------------------------------------------------------
+  -- FUNCTION: main()
+  --
+  -- DATE:  April 3, 2018
+  --
+  -- REVISIONS: April 3, 2018
+  --							Initial file set up
+  --
+  -- DESIGNER: Li-Yan Tong & John Tee
+  --
+  -- PROGRAMMER: Li-Yan Tong
+  --
+  -- INTERFACE: void IdleConnect()
+  --
+  -- RETURNS:
+  --
+  -- NOTES:
+  ---------------------------------------------------------------------------------------*/
   public static void main (String [] args)
   {
 

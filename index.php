@@ -109,7 +109,7 @@
 			var marker = new google.maps.Marker({
 				position: location,
 				map: map,
-				title: name + time
+				title: "Name: " + name + "\nTime: " + time
 			});
 			markers.push(marker);
 		}
