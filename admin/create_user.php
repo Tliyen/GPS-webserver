@@ -1,23 +1,48 @@
-<?php include('../functions.php') ?>
+<?php
+/*---------------------------------------------------------------------------------------
+--	Source File:		create_user.php - Webpage to create a new user
+--
+--	Methods:	see functions.php
+--
+--	Date:			April 3, 2018
+--
+--	Revisions:		(Date and Description)
+--                April 3, 2018
+--                Initialize and Set up Project
+--                April 5, 2018
+--                Code Comments
+--
+--	Designer:		  Anthony Vu, Li-Yan Tong, Morgan Ariss, John Tee
+--                Source: Awa Melvine: User Registration Tutorial
+--
+--	Programmer:		Li-Yan Tong
+--
+--	Notes:
+--	Website layout for creating a new user to login to the website.
+--  https://codewithawa.com/posts/complete-user-registration-system-using-php-and-mysql-database
+---------------------------------------------------------------------------------------*/
+include('../functions.php')
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
 	<title>Registration system PHP and MySQL - Create user</title>
 	<link rel="stylesheet" type="text/css" href="../style.css">
 	<style>
-		.header {
-			background: #003366;
-		}
-		button[name=register_btn] {
-			background: #003366;
-		}
+	.header {
+		background: #003366;
+	}
+	button[name=register_btn] {
+		background: #003366;
+	}
 	</style>
 </head>
 <body>
 	<div class="header">
 		<h2>Admin - create user</h2>
 	</div>
-	
+
 	<form method="post" action="create_user.php">
 
 		<?php echo display_error(); ?>

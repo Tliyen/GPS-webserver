@@ -3,10 +3,13 @@
 --	Source File:		tcps.java - A simple (multi-threaded) Java TCP echo server
 --
 --	Classes:		tcps - public class
---				ServerSocket - java.net
---				Socket	     - java.net
+--              ReadThread - Thread class
+--				      ServerSocket - java.net
+--				      Socket	     - java.net
 --
 --	Methods:
+--        run()
+--        main()
 --				getRemoteSocketAddress 	(Socket Class)
 --				getLocalSocketAddress  	(Socket Class)
 --				getInputStream		(Socket Class)
@@ -21,6 +24,10 @@
 --	Revisions:		(Date and Description)
 --                April 3, 2018
 --                Initialize and Set up Project
+--                April 4, 2018
+--                Rework output strings and writing to file
+--                April 5, 2018
+--                Code comments
 --
 --	Designer:		  Anthony Vu, Li-Yan Tong, Morgan Ariss, John Tee
 --                Source: tcps.java Aman Abdulla (February 8, 2014)
@@ -60,20 +67,23 @@ public class tcps extends Thread
   /*------------------------------------------------------------------------------------
   -- FUNCTION: run()
   --
-  -- DATE:  March 4, 2018
+  -- DATE:  April 3, 2018
   --
-  -- REVISIONS: March 4, 2018
+  -- REVISIONS: April 3, 2018
   --							Initial file set up
   --
-  -- DESIGNER: Li-Yan Tong & John Tee
+  -- DESIGNER: Anthony Vu & Li-Yan Tong
   --
-  -- PROGRAMMER: Li-Yan Tong
+  -- PROGRAMMER: Anthony Vu
   --
   -- INTERFACE: run()
   --
-  -- RETURNS:
+  -- RETURNS: void
   --
   -- NOTES:
+  -- Constantly listens for new socket connections from new users.  If a user connection
+  -- is detected, a new ReadThread() is created to handle updating server data from the
+  -- client.
   ---------------------------------------------------------------------------------------*/
   public void run()
   {
@@ -102,22 +112,21 @@ public class tcps extends Thread
   /*------------------------------------------------------------------------------------
   -- Class: ReadThread()
   --
+  -- Methods: run()
+  --
   -- DATE:  March 4, 2018
   --
   -- REVISIONS: March 4, 2018
   --							Initial file set up
   --
-  -- DESIGNER: Li-Yan Tong & John Tee
+  -- DESIGNER: Anthony Vu & Li-Yan Tong
   --
-  -- PROGRAMMER: Li-Yan Tong
+  -- PROGRAMMER: Anthony Vu
   --
   -- INTERFACE: ReadThread()
   --
-  -- RETURNS: int
-  --					If sucessful file request and printed to screen return 0
-  --					If it fails return -1
-  --
   -- NOTES:
+  -- Holds information regarding a client connection and data comming from this connection
   ---------------------------------------------------------------------------------------*/
   class ReadThread extends Thread {
 
@@ -134,15 +143,18 @@ public class tcps extends Thread
     -- REVISIONS: March 4, 2018
     --							Initial file set up
     --
-    -- DESIGNER: Li-Yan Tong & John Tee
+    -- DESIGNER: Anthony Vu & Li-Yan Tong
     --
-    -- PROGRAMMER: Li-Yan Tong
+    -- PROGRAMMER: Anthony Vu
     --
     -- INTERFACE: run()
     --
-    -- RETURNS:
+    -- RETURNS: Writes location data to a all.csv file and a geo.csv file
     --
     -- NOTES:
+    -- Constantly writes location data comming in from a client socket to a all.csv file that
+    -- stores location data from all clients from the start of running this program.  Also writes
+    -- the most up to date client location to a geo.csv file.
     ---------------------------------------------------------------------------------------*/
     public void run() {
 
@@ -223,7 +235,6 @@ public class tcps extends Thread
         }
       }
     }
-
   }
 
   /*------------------------------------------------------------------------------------
@@ -234,15 +245,16 @@ public class tcps extends Thread
   -- REVISIONS: April 3, 2018
   --							Initial file set up
   --
-  -- DESIGNER: Li-Yan Tong & John Tee
+  -- DESIGNER: Anthony Vu & Li-Yan Tong
   --
-  -- PROGRAMMER: Li-Yan Tong
+  -- PROGRAMMER: Anthony Vu
   --
-  -- INTERFACE: void IdleConnect()
+  -- INTERFACE: main()
   --
-  -- RETURNS:
+  -- RETURNS: void
   --
   -- NOTES:
+  -- Entry point of the program.  Checks if the server has started up properly.
   ---------------------------------------------------------------------------------------*/
   public static void main (String [] args)
   {
