@@ -144,12 +144,6 @@ public class tcps extends Thread
     --
     -- NOTES:
     ---------------------------------------------------------------------------------------*/
-    class ReadThread extends Thread {
-
-      private Socket s;
-      public ReadThread(Socket s) {
-        this.s = s;
-      }
       public void run() {
 
         while(true) {
