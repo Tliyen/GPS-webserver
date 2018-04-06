@@ -1,3 +1,5 @@
+/* Style Sheet for GPS Tracker Website. */
+
 * {
 	margin: 0px;
 	padding: 0px;
@@ -8,18 +10,19 @@ body {
 }
 
 .header {
-	width: 40%;
+	width: 80%;
 	margin: 50px auto 0px;
 	color: white;
-	background: #5F9EA0;
+	background: #6699ff;
 	text-align: center;
 	border: 1px solid #B0C4DE;
 	border-bottom: none;
 	border-radius: 10px 10px 0px 0px;
 	padding: 20px;
 }
+
 form, .content {
-	width: 40%;
+	width: 80%;
 	margin: 0px auto;
 	padding: 20px;
 	border: 1px solid #B0C4DE;

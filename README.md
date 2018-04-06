@@ -1,3 +1,4 @@
 # C4985-GPS-webserver
 
-A webserver to listen and plot location data for android devices.
+A java TCP webserver website that listens and plots current location data from
+android devices on Google Maps.

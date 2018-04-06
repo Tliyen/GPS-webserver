@@ -3,10 +3,13 @@
 --	Source File:		tcps.java - A simple (multi-threaded) Java TCP echo server
 --
 --	Classes:		tcps - public class
---				ServerSocket - java.net
---				Socket	     - java.net
+--              ReadThread - Thread class
+--				      ServerSocket - java.net
+--				      Socket	     - java.net
 --
 --	Methods:
+--        run()
+--        main()
 --				getRemoteSocketAddress 	(Socket Class)
 --				getLocalSocketAddress  	(Socket Class)
 --				getInputStream		(Socket Class)
@@ -21,6 +24,10 @@
 --	Revisions:		(Date and Description)
 --                April 3, 2018
 --                Initialize and Set up Project
+--                April 4, 2018
+--                Rework output strings and writing to file
+--                April 5, 2018
+--                Code comments
 --
 --	Designer:		  Anthony Vu, Li-Yan Tong, Morgan Ariss, John Tee
 --                Source: tcps.java Aman Abdulla (February 8, 2014)
@@ -52,11 +59,32 @@ public class tcps extends Thread
   private HashMap<String, String> clients;
   public tcps (int port) throws IOException
   {
-      hasData = false;
+    hasData = false;
     ListeningSocket = new ServerSocket(port);
     clients = new HashMap<>();
   }
 
+  /*------------------------------------------------------------------------------------
+  -- FUNCTION: run()
+  --
+  -- DATE:  April 3, 2018
+  --
+  -- REVISIONS: April 3, 2018
+  --							Initial file set up
+  --
+  -- DESIGNER: Anthony Vu & Li-Yan Tong
+  --
+  -- PROGRAMMER: Anthony Vu
+  --
+  -- INTERFACE: run()
+  --
+  -- RETURNS: void
+  --
+  -- NOTES:
+  -- Constantly listens for new socket connections from new users.  If a user connection
+  -- is detected, a new ReadThread() is created to handle updating server data from the
+  -- client.
+  ---------------------------------------------------------------------------------------*/
   public void run()
   {
     while(true)
@@ -81,12 +109,53 @@ public class tcps extends Thread
 
   }
 
+  /*------------------------------------------------------------------------------------
+  -- Class: ReadThread()
+  --
+  -- Methods: run()
+  --
+  -- DATE:  March 4, 2018
+  --
+  -- REVISIONS: March 4, 2018
+  --							Initial file set up
+  --
+  -- DESIGNER: Anthony Vu & Li-Yan Tong
+  --
+  -- PROGRAMMER: Anthony Vu
+  --
+  -- INTERFACE: ReadThread()
+  --
+  -- NOTES:
+  -- Holds information regarding a client connection and data comming from this connection
+  ---------------------------------------------------------------------------------------*/
   class ReadThread extends Thread {
 
     private Socket s;
     public ReadThread(Socket s) {
       this.s = s;
     }
+
+    /*------------------------------------------------------------------------------------
+    -- FUNCTION: run()
+    --
+    -- DATE:  March 4, 2018
+    --
+    -- REVISIONS: March 4, 2018
+    --							Initial file set up
+    --
+    -- DESIGNER: Anthony Vu & Li-Yan Tong
+    --
+    -- PROGRAMMER: Anthony Vu
+    --
+    -- INTERFACE: run()
+    --
+    -- RETURNS: Writes location data to a all.csv file and a geo.csv file
+    --
+    -- NOTES:
+    -- Constantly writes location data comming in from a client socket to a all.csv file that
+    -- stores location data from all clients from the start of running this program.  Also writes
+    -- the most up to date client location to a geo.csv file.
+    ---------------------------------------------------------------------------------------*/
     public void run() {
 
       while(true) {
@@ -112,74 +181,53 @@ public class tcps extends Thread
             // Create .csv file to test values on Webserver
             System.out.println ("Message: " + ServerString + " from " + s.getRemoteSocketAddress());
             clients.put(s.getRemoteSocketAddress().toString(), ServerString);
-            //if new client, append to the end of the csv file
-            if(!clients.containsKey(s.getRemoteSocketAddress().toString())) {
 
-              FileWriter pw = new FileWriter("geo.csv",true);
-              FileWriter aw = new  FileWriter("all.csv", true);
-              StringBuilder sb = new StringBuilder();
-              if(!hasData){
-              sb.append("name, lat, long, ip, time\n");
-              hasData = true;
-              }
+            FileWriter aw = new  FileWriter("all.csv", true);
+            String[] addressAllString = s.getRemoteSocketAddress().toString().split(":");
+            String[] StringArray = ServerString.split(" ");
+            StringBuilder al = new StringBuilder();
 
-              String[] addressString = s.getRemoteSocketAddress().toString().split(":");
-              String[] serverStringArray = ServerString.split(" ");
-              sb.append(serverStringArray[3]);
-              sb.append(',');
-              sb.append(serverStringArray[2]);
-              sb.append(',');
-              sb.append(serverStringArray[1]);
-              sb.append(',');
-              sb.append(serverStringArray[0]);
-              sb.append(',');
-              sb.append(addressString[0]);
-              sb.append('\n');
-              pw.write(sb.toString());
-                aw.write(sb.toString());
-            aw.close();
-              pw.close();
-              /*
-              FileWriter pw = new FileWriter("geo.csv",true);
-              StringBuilder sb = new StringBuilder();
-              String[] addressString = s.getRemoteSocketAddress().toString().split(":");
-              String[] serverStringArray = ServerString.split(" ");
-              sb.append(serverStringArray[2]);
-              sb.append(',');
-              sb.append(serverStringArray[0]);
-              sb.append(',');
-              sb.append(serverStringArray[1]);
-              sb.append(',');
-              sb.append(addressString[0]);
-              sb.append('\n');
-              pw.write(sb.toString());
-              pw.close();*/
-            } else { //else update clients new values in csv
-
-                FileWriter pw = new FileWriter("geo.csv",false);
-                StringBuilder sb = new StringBuilder();
-                sb.append("name, lat, long, ip, time\n");
-
-                for(String client: clients.keySet()) {
-                System.out.println (client);
-                String[] addressString = s.getRemoteSocketAddress().toString().split(":");
-                String[] clientStringArray = clients.get(client).split(" ");
-                sb.append(clientStringArray[3]);
-                sb.append(',');
-                sb.append(clientStringArray[2]);
-                sb.append(',');
-                sb.append(clientStringArray[1]);
-                sb.append(',');
-                sb.append(clientStringArray[0]);
-                sb.append(',');
-                sb.append(addressString[0]);
-                sb.append('\n');
-               }
-
-                pw.write(sb.toString());
-                pw.close();
-
+            al.append(StringArray[2]);
+            al.append(',');
+            al.append(StringArray[0]);
+            al.append(',');
+            al.append(StringArray[1]);
+            al.append(',');
+            for (int i=0; i < addressAllString.length; i++) {
+              addressAllString[i] = addressAllString[i].replaceAll("/", "");
             }
+            al.append(addressAllString[0]);
+            al.append(',');
+            al.append(StringArray[3]);
+            al.append('\n');
+            aw.write(al.toString());
+            aw.close();
+
+            FileWriter pw = new FileWriter("geo.csv",false);
+            StringBuilder sb = new StringBuilder();
+            sb.append("name, lat, long, ip, time\n");
+
+            for(String client: clients.keySet()) {
+              String[] addressString = s.getRemoteSocketAddress().toString().split(":");
+              String[] clientStringArray = clients.get(client).split(" ");
+              sb.append(clientStringArray[2]);
+              sb.append(',');
+              sb.append(clientStringArray[0]);
+              sb.append(',');
+              sb.append(clientStringArray[1]);
+              sb.append(',');
+              for (int i=0; i < addressString.length; i++) {
+                addressString[i] = addressString[i].replaceAll("/", "");
+              }
+              sb.append(addressString[0]);
+              sb.append(',');
+              sb.append(clientStringArray[3]);
+              sb.append('\n');
+            }
+
+            pw.write(sb.toString());
+            pw.close();
+
           }
           catch (IOException ex) {
             ex.printStackTrace();
@@ -187,8 +235,27 @@ public class tcps extends Thread
         }
       }
     }
-
   }
+
+  /*------------------------------------------------------------------------------------
+  -- FUNCTION: main()
+  --
+  -- DATE:  April 3, 2018
+  --
+  -- REVISIONS: April 3, 2018
+  --							Initial file set up
+  --
+  -- DESIGNER: Anthony Vu & Li-Yan Tong
+  --
+  -- PROGRAMMER: Anthony Vu
+  --
+  -- INTERFACE: main()
+  --
+  -- RETURNS: void
+  --
+  -- NOTES:
+  -- Entry point of the program.  Checks if the server has started up properly.
+  ---------------------------------------------------------------------------------------*/
   public static void main (String [] args)
   {
 
